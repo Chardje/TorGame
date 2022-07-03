@@ -66,8 +66,9 @@ namespace TorGame
                     {
                         pole[x - 1, y - 1] = new Label();
                         ref Label p = ref pole[x - 1, y - 1];
-                        p.Background = new SolidColorBrush(Color.FromRgb((byte)(256/width*x),0,(byte)(256/height*y)));
-                        p.Foreground = Brushes.White;
+                        byte c = (byte)(256 / (width * height) * (y + (x-1) * height));
+                        p.Background = new SolidColorBrush(Color.FromRgb(c,c,c));
+                        p.Foreground = new SolidColorBrush(Color.FromRgb((byte)(128 +c), (byte)(128+c), (byte)(128+c)));
                         p.Margin = new Thickness(2, 2, 2, 2);
                         p.Content = y+(x-1)* height;
                         p.FontSize = 20;
