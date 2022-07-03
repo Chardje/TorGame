@@ -20,8 +20,8 @@ namespace TorGame
     /// </summary>
     public partial class MainWindow : Window
     {
-        int width=2;
-        int height=2;
+        byte width=2;
+        byte height=2;
         Label[,] pole;
         public MainWindow()
         {
@@ -58,18 +58,18 @@ namespace TorGame
             } while (GridGame.RowDefinitions.Count != w);
 
             
-            for (int y = 0; y < h; y++)
+            for (byte y = 0; y < h; y++)
             {
-                for (int x = 0; x < w; x++)
+                for (byte x = 0; x < w; x++)
                 {
                     if (x > 0 && y > 0 && x < w - 1 && y < h - 1)//Создание лейблов в центре поля
                     {
                         pole[x - 1, y - 1] = new Label();
                         ref Label p = ref pole[x - 1, y - 1];
-                        p.Background = Brushes.Gray;
+                        p.Background = new SolidColorBrush(Color.FromRgb((byte)(256/width*x),0,(byte)(256/height*y)));
                         p.Foreground = Brushes.White;
                         p.Margin = new Thickness(2, 2, 2, 2);
-                        p.Content = x+""+y;
+                        p.Content = y+(x-1)* height;
                         p.FontSize = 20;
                         p.MinHeight = 30;
                         p.MinWidth = 30;
@@ -117,7 +117,7 @@ namespace TorGame
 
                 return B;
             }
-            
+            Rest();
         }
 
         /// <summary>
@@ -188,10 +188,10 @@ namespace TorGame
             void SwichR(ref Label l1, ref Label l2) 
             {
                 (l1, l2) = (l2, l1);
+
                 int x = Grid.GetRow(l2);
                 Grid.SetRow(l2, Grid.GetRow(l1));
                 Grid.SetRow(l1, x);
-
             }
             void SwichC(ref Label l1, ref Label l2) 
             {
@@ -226,22 +226,20 @@ namespace TorGame
 
         private void VClick(object sender, RoutedEventArgs e)
         {
-            
-            if (((Button)e.Source).Content.ToString()== "↑") width++;
-            else width--;
 
-            SizeV.Content = height;
+            if (((Button)e.Source).Content.ToString() == "↑") { if (width < 10) width++; }
+            else { if (width > 1) width--; }
+
+            SizeV.Content = width;
             SetPole(width, height);
-
         }
         private void HClick(object sender, RoutedEventArgs e)
         {
-            if (((Button)e.Source).Content.ToString() == "→") height++;
-            else height--;
+            if (((Button)e.Source).Content.ToString() == "→") { if (height < 10) height++; }
+            else { if (height > 1) height--; }
 
-            SizeH.Content = width;
+            SizeH.Content = height;
             SetPole(width, height);
-
         }
         void Start()
         {
@@ -257,11 +255,27 @@ namespace TorGame
         }
         void Rest()
         {
+            Random R = new Random();
+            Swich S=Sich;
+            for (int x = 0; x < width; x++)
+            {
+                for (int y = 0; y < height; y++)
+                {
+                    S(ref pole[x, y], ref pole[R.Next(width-x)+x, R.Next(height-y)+y]);
+                }
+            }
+            void Sich(ref Label l1,ref Label l2){
+                (l1, l2) = (l2, l1);
 
-        }
-        private void Rest(object sender, RoutedEventArgs e)
-        {
+                int g = Grid.GetRow(l2);
+                Grid.SetRow(l2, Grid.GetRow(l1));
+                Grid.SetRow(l1, g);
 
+                g = Grid.GetColumn(l2);
+                Grid.SetColumn(l2, Grid.GetColumn(l1));
+                Grid.SetColumn(l1, g);
+            }
         }
+        void Rest(object sender, RoutedEventArgs e) => Rest();
     }
 }
