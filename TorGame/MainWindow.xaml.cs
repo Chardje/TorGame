@@ -62,7 +62,7 @@ namespace TorGame
             {
                 for (int x = 0; x < w; x++)
                 {
-                    if (x > 0 && y > 0 && x < w - 1 && y < h - 1)//центр
+                    if (x > 0 && y > 0 && x < w - 1 && y < h - 1)//Создание лейблов в центре поля
                     {
                         pole[x - 1, y - 1] = new Label();
                         ref Label p = ref pole[x - 1, y - 1];
@@ -117,6 +117,7 @@ namespace TorGame
 
                 return B;
             }
+            
         }
 
         /// <summary>
@@ -126,8 +127,81 @@ namespace TorGame
         /// <param name="e">link to button</param>
         void ButtonClickPole(object sender, RoutedEventArgs e)
         {
+            Button b = ((Button)e.Source);
+            bool plus;
+            bool vert;
+            int z=Convert.ToInt32(b.Name.Remove(0,1));
+            switch (b.Name[0]) 
+            {
+                case 'l':                    
+                    vert = false;
+                    plus = true;
+                    break;
+                case 'r':
+                    vert = false;
+                    plus=false;
+                    break;
+                case 'u':
+                    vert = true;
+                    plus=true;
+                    break;
+                case 'd': 
+                    vert = true;
+                    plus = false;
+                    break;
+                    default:
+                    vert=false;
+                    plus=false;
+                    break;
+            }
 
+            int f;
+            Swich Swicher; 
+            if (vert) 
+            {
+                f = height;
+                Swicher = SwichR;
+            }
+            else
+            {
+                f = width;
+                Swicher = SwichC;
+            }
+            if (plus) 
+            {
+                for (int i = 0; i < f - 1; i++)
+                {
+                    Swicher(ref pole[vert ? i : z - 1, vert ? z - 1 : i]
+                          , ref pole[vert ? i + 1 : z - 1, vert ? z - 1 : i + 1]);
+                }
+            }
+            else
+            {
+                for (int i = f-1; i > 0; i--)
+                {
+                    Swicher(ref pole[vert ? i : z - 1, vert ? z - 1 : i]
+                          , ref pole[vert ? i - 1 : z - 1, vert ? z - 1 : i - 1]);
+                }
+            }
+            
+
+            void SwichR(ref Label l1, ref Label l2) 
+            {
+                (l1, l2) = (l2, l1);
+                int x = Grid.GetRow(l2);
+                Grid.SetRow(l2, Grid.GetRow(l1));
+                Grid.SetRow(l1, x);
+
+            }
+            void SwichC(ref Label l1, ref Label l2) 
+            {
+                (l1, l2) = (l2, l1);
+                int x = Grid.GetColumn(l2);
+                Grid.SetColumn(l2, Grid.GetColumn(l1));
+                Grid.SetColumn(l1, x);
+            }
         }
+        delegate void Swich(ref Label l1, ref Label l2);
 
         class WinTime 
         {
