@@ -30,12 +30,17 @@ namespace TorGame
             SizeH.Content = width;
             SetPole(width,height);
         }
-
+        /// <summary>
+        /// create pole size w*h
+        /// </summary>
+        /// <param name="w"></param>
+        /// <param name="h"></param>
         void SetPole(int w,int h)
         {
             pole = new Label[w,h];
-            w+=2;
-            h+=2;
+            w +=2;
+            h+=2;            
+
             GridGame.Children.Clear();
             do
             {
@@ -53,61 +58,42 @@ namespace TorGame
             } while (GridGame.RowDefinitions.Count != w);
 
             
-            for (int Hi = 0; Hi < h; Hi++)
+            for (int y = 0; y < h; y++)
             {
-                for (int Wi = 0; Wi < w; Wi++)
+                for (int x = 0; x < w; x++)
                 {
-                    if (Wi > 0 && Hi > 0 && Wi < w - 1 && Hi < h - 1)//центр
+                    if (x > 0 && y > 0 && x < w - 1 && y < h - 1)//центр
                     {
-                        pole[Wi - 1, Hi - 1] = new Label();
-                        ref Label p = ref pole[Wi - 1, Hi - 1];
+                        pole[x - 1, y - 1] = new Label();
+                        ref Label p = ref pole[x - 1, y - 1];
                         p.Background = Brushes.Gray;
                         p.Foreground = Brushes.White;
                         p.Margin = new Thickness(2, 2, 2, 2);
-                        p.Content = Wi+""+Hi;
+                        p.Content = x+""+y;
                         p.FontSize = 20;
                         p.MinHeight = 30;
                         p.MinWidth = 30;
 
-                        Grid.SetRow(pole[Wi - 1, Hi - 1], Wi);
-                        Grid.SetColumn(pole[Wi - 1, Hi - 1], Hi);
+                        Grid.SetRow(pole[x - 1, y - 1], x);
+                        Grid.SetColumn(pole[x - 1, y - 1], y);
 
-                        GridGame.Children.Add(pole[Wi - 1, Hi - 1]);
+                        GridGame.Children.Add(pole[x - 1, y - 1]);
                     }
-                    else if (Wi == Hi || (Wi == 0 && Hi == h - 1) || (Wi == w - 1 && Hi == 0))//якщо кут
+                    else if ((x == 0 && y == 0 )|| (x == w - 1 && y == h - 1) || (x == 0 && y == h - 1) || (x == w - 1 && y == 0))//якщо кут
                     { }
-                    else if (Wi == 0) 
-                    {
-                        Button b = CreButt("←", Hi);
-                        Grid.SetRow(b, Hi);//
-                        Grid.SetColumn(b, Wi);//
+                    else {
+                        Button b=new Button();
+                        if (x == 0)             b = CreButt("↑", y);
+                        else if (x == w - 1)    b = CreButt("↓", y);
+                        else if (y == 0)        b = CreButt("←", x);
+                        else if (y == h - 1)    b = CreButt("→", x);
+
+                        Grid.SetRow(b, x);
+                        Grid.SetColumn(b, y);
 
                         GridGame.Children.Add(b);
                     }
-                    else if (Wi == w - 1) 
-                    {
-                        Button b = CreButt("→", Hi);
-                        Grid.SetRow(b, Hi);//
-                        Grid.SetColumn(b, Wi);//
-
-                        GridGame.Children.Add(b);
-                    }
-                    else if (Hi == 0) 
-                    {
-                        Button b = CreButt("↑", Wi);
-                        Grid.SetRow(b, Hi);//
-                        Grid.SetColumn(b, Wi);//
-
-                        GridGame.Children.Add(b);
-                    }
-                    else if (Hi == h - 1) 
-                    {
-                        Button b = CreButt("↓", Wi);
-                        Grid.SetRow(b, Hi);//
-                        Grid.SetColumn(b, Wi);//
-
-                        GridGame.Children.Add(b);
-                    }
+                    
                 }
             }
             Button CreButt(string s,int num)
@@ -132,6 +118,12 @@ namespace TorGame
                 return B;
             }
         }
+
+        /// <summary>
+        /// Rotate labels in pole when click button in pole
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e">link to button</param>
         void ButtonClickPole(object sender, RoutedEventArgs e)
         {
 
