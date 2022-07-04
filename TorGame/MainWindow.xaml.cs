@@ -60,6 +60,7 @@ namespace TorGame
             h += 2;
 
             GridGame.Children.Clear();
+            //add or remove column
             do
             {
                 if (GridGame.ColumnDefinitions.Count > h) GridGame.ColumnDefinitions.RemoveAt(GridGame.ColumnDefinitions.Count - 1);
@@ -67,6 +68,8 @@ namespace TorGame
                 else if (GridGame.ColumnDefinitions.Count < h) GridGame.ColumnDefinitions.Add(new ColumnDefinition());
 
             } while (GridGame.ColumnDefinitions.Count != h);
+
+            //add or remove row
             do
             {
                 if (GridGame.RowDefinitions.Count > w) GridGame.RowDefinitions.RemoveAt(GridGame.RowDefinitions.Count - 1);
@@ -80,6 +83,7 @@ namespace TorGame
             {
                 for (byte x = 0; x < w; x++)
                 {
+                    //create labels in center
                     if (x > 0 && y > 0 && x < w - 1 && y < h - 1)//Создание лейблов в центре поля
                     {
                         pole[x - 1, y - 1] = new Label();
@@ -98,8 +102,10 @@ namespace TorGame
 
                         GridGame.Children.Add(pole[x - 1, y - 1]);
                     }
-                    else if ((x == 0 && y == 0) || (x == w - 1 && y == h - 1) || (x == 0 && y == h - 1) || (x == w - 1 && y == 0))//якщо кут
+                    //angles
+                    else if ((x == 0 && y == 0) || (x == w - 1 && y == h - 1) || (x == 0 && y == h - 1) || (x == w - 1 && y == 0))
                     { }
+                    //create buttons
                     else
                     {
                         Button b = new Button();
@@ -151,21 +157,22 @@ namespace TorGame
             bool plus;
             bool vert;
             int z = Convert.ToInt32(b.Name.Remove(0, 1));
+
             switch (b.Name[0])
             {
-                case 'l':
+                case 'l'://left
                     vert = false;
                     plus = true;
                     break;
-                case 'r':
+                case 'r'://right
                     vert = false;
                     plus = false;
                     break;
-                case 'u':
+                case 'u'://up
                     vert = true;
                     plus = true;
                     break;
-                case 'd':
+                case 'd'://down
                     vert = true;
                     plus = false;
                     break;
@@ -179,11 +186,13 @@ namespace TorGame
             Swich Swicher;
             if (vert)
             {
+                //if vertical switch
                 f = height;
                 Swicher = SwichR;
             }
             else
             {
+                //if horizontal swich
                 f = width;
                 Swicher = SwichC;
             }
@@ -216,13 +225,14 @@ namespace TorGame
             if (!stopwatch.IsRunning) Start();
             CheckWin();
 
-            void SwichR(ref Label l1, ref Label l2)
+            void SwichR(ref Label l1, ref Label l2)//swich row
             {                
                 int x = Grid.GetRow(l2);
                 Grid.SetRow(l2, Grid.GetRow(l1));
                 Grid.SetRow(l1, x);
             }
-            void SwichC(ref Label l1, ref Label l2)
+            
+            void SwichC(ref Label l1, ref Label l2)//swich column
             {
                 int x = Grid.GetColumn(l2);
                 Grid.SetColumn(l2, Grid.GetColumn(l1));
@@ -284,7 +294,7 @@ namespace TorGame
             foreach (Label l in pole)
             {
                 i++;
-                if (l.Content.ToString() != i.ToString())
+                if (l.Content.ToString() != i.ToString())//if 1 of all  labels no in hir palse code end
                     return;
             }
             Stop();
@@ -295,6 +305,8 @@ namespace TorGame
             Random R = new Random();
             Swich S = Sich;
             int rx, ry;
+
+            ///randomize labels
             for (int x = 0; x < width; x++)
             {
                 for (int y = 0; y < height; y++)
@@ -302,7 +314,7 @@ namespace TorGame
                     rx = R.Next(width - x) + x;
                     ry= R.Next(height - y) + y;
                     S(ref pole[x, y], ref pole[rx, ry]);
-                    (pole[x, y], pole[rx, ry]) = (pole[rx, ry], pole[x, y]);
+                    (pole[x, y], pole[rx, ry]) = (pole[rx, ry], pole[x, y]);//swich in pole
                 }
             }
             void Sich(ref Label l1, ref Label l2)
